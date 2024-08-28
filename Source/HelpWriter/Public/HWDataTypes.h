@@ -7,7 +7,7 @@
 
 // Structure to hold the parsed CSV data
 USTRUCT(BlueprintType)
-struct HELPWRITER_API FCSVRowData
+struct HELPWRITER_API FScenarioData
 {
     GENERATED_BODY()
 

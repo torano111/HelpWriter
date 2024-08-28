@@ -70,7 +70,7 @@ void* UHWFunctionLibrary::GetWindowHandle()
     return nullptr;
 }
 
-bool UHWFunctionLibrary::ReadCSVFile(const FString& FilePath, TArray<FCSVRowData>& OutTableData)
+bool UHWFunctionLibrary::ReadCSVFile(const FString& FilePath, TArray<FScenarioData>& OutTableData)
 {
     TArray<FString> FileLines;
     if (!FFileHelper::LoadFileToStringArray(FileLines, *FilePath))
@@ -80,23 +80,22 @@ bool UHWFunctionLibrary::ReadCSVFile(const FString& FilePath, TArray<FCSVRowData
 
     for (const FString& Line : FileLines)
     {
-        FCSVRowData ParsedRow;
+        FScenarioData ParsedRow;
         if (ParseCSVRow(Line, ParsedRow))
         {
             OutTableData.Add(ParsedRow);
         }
         else
         {
-            FString ErrorMessage = Line;
-            //UDebugLog::OutputError(ErrorMessage, true, true, 5.f);
-            UDebugLog::Output(ErrorMessage, true, true, 5.f);
+            FString ErrorMessage = FString::Printf(TEXT("ReadCSVFile Failed: %s"), *Line);
+            UDebugLog::OutputError(ErrorMessage, true, true, 5.f);
         }
     }
 
     return true;
 }
 
-bool UHWFunctionLibrary::ParseCSVRow(const FString& Row, FCSVRowData& OutRowData)
+bool UHWFunctionLibrary::ParseCSVRow(const FString& Row, FScenarioData& OutRowData)
 {
     TArray<FString> Columns;
     Row.ParseIntoArray(Columns, TEXT(","), true);
@@ -123,8 +122,10 @@ bool UHWFunctionLibrary::ParseCSVRow(const FString& Row, FCSVRowData& OutRowData
                 return false; // Invalid numeric range
             }
 
-            OutRowData.StartValue = FCString::Atof(*RangeValues[0]);
-            OutRowData.EndValue = FCString::Atof(*RangeValues[1]);
+            float Value0 = FCString::Atof(*RangeValues[0]);
+            float Value1 = FCString::Atof(*RangeValues[1]);
+            OutRowData.StartValue = FMath::Min(Value0, Value1);
+            OutRowData.EndValue = FMath::Max(Value0, Value1);
             OutRowData.bIsRange = true;
         }
         else
