@@ -5,6 +5,22 @@
 #include "CoreMinimal.h"
 #include "HWDataTypes.generated.h"
 
+ //
+//USTRUCT(BlueprintType)
+//struct HELPWRITER_API FScenarioData_Range
+//{
+//    GENERATED_BODY()
+//
+//public:
+//    // 
+//    UPROPERTY(BlueprintReadOnly)
+//    FVector2D Value;
+//
+//    // 
+//    UPROPERTY(BlueprintReadOnly)
+//    FString Text;
+//};
+
 // Structure to hold the parsed CSV data
 USTRUCT(BlueprintType)
 struct HELPWRITER_API FScenarioData
@@ -26,4 +42,14 @@ struct HELPWRITER_API FScenarioData
     // Determines if this row represents a range
     UPROPERTY(BlueprintReadOnly)
     bool bIsRange;
+};
+
+// Structure to hold the parsed CSV data
+USTRUCT(BlueprintType)
+struct HELPWRITER_API FHWDiagramData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly)
+    float StartValue;
 };
