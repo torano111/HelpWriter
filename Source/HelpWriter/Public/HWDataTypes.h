@@ -13,11 +13,11 @@
 //
 //public:
 //    // 
-//    UPROPERTY(BlueprintReadOnly)
+//    UPROPERTY(BlueprintReadWrite)
 //    FVector2D Value;
 //
 //    // 
-//    UPROPERTY(BlueprintReadOnly)
+//    UPROPERTY(BlueprintReadWrite)
 //    FString Text;
 //};
 
@@ -27,29 +27,63 @@ struct HELPWRITER_API FScenarioData
 {
     GENERATED_BODY()
 
+public:
     // If this is a range, the starting value
-    UPROPERTY(BlueprintReadOnly)
+    UPROPERTY(BlueprintReadWrite)
     float StartValue;
 
     // If this is a range, the ending value; otherwise, this will be the same as StartValue
-    UPROPERTY(BlueprintReadOnly)
+    UPROPERTY(BlueprintReadWrite)
     float EndValue;
 
     // The corresponding event or string data
-    UPROPERTY(BlueprintReadOnly)
+    UPROPERTY(BlueprintReadWrite)
     FString EventData;
 
     // Determines if this row represents a range
-    UPROPERTY(BlueprintReadOnly)
+    UPROPERTY(BlueprintReadWrite)
     bool bIsRange;
 };
 
-// Structure to hold the parsed CSV data
+USTRUCT(BlueprintType)
+struct HELPWRITER_API FHWDiagramEventText
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(BlueprintReadWrite)
+    FString Text;
+
+    UPROPERTY(BlueprintReadWrite)
+    FLinearColor LabelColor;
+
+    UPROPERTY(BlueprintReadWrite)
+    bool bHighlight = false;
+};
+
+USTRUCT(BlueprintType)
+struct HELPWRITER_API FHWDiagramEvent
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(BlueprintReadWrite)
+    TArray<FHWDiagramEventText> Texts;
+
+    UPROPERTY(BlueprintReadWrite)
+    float Time;
+
+    // Amount of something, such as amount of happiness
+    UPROPERTY(BlueprintReadWrite)
+    float Amount;
+};
+
 USTRUCT(BlueprintType)
 struct HELPWRITER_API FHWDiagramData
 {
     GENERATED_BODY()
 
-    UPROPERTY(BlueprintReadOnly)
-    float StartValue;
+public:
+    UPROPERTY(BlueprintReadWrite)
+    TArray<FHWDiagramEvent> Events;
 };
