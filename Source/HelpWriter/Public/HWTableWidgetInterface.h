@@ -26,11 +26,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "HWTableWidgetInterface")
 	UUserWidget* GetAsWidget() const;
 
-	// Get data of the table. This may be used for export.
+	// Initialize the table
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "HWTableWidgetInterface")
-	FHWDiagramData GetHWDiagramData(const FHWDiagramData& InData);
+	void InitializeTable();
 
-	// Load data of the table. This may be used for import.
+	// Notify the change of the table data.
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "HWTableWidgetInterface")
-	void LoadHWDiagramData(const FHWDiagramData& InData);
+	void NotifyTableDataUpdate();
 };
