@@ -236,3 +236,72 @@ void UHWFunctionLibrary::ExportWidgetToImage(UUserWidget* Widget, const FString&
 		BeginCleanup(WidgetRenderer);
 	}
 }
+
+TSharedRef<FJsonObject> UHWFunctionLibrary::ConvertDiagramDataToJsonObject(const FHWDiagramData& InData)
+{
+	// Create the root JSON object
+	TSharedRef<FJsonObject> JsonRoot = MakeShareable(new FJsonObject);
+
+	// Create a JSON array object for the Events array
+	TArray<TSharedPtr<FJsonValue>> JsonEventsArray;
+
+	// Loop through each event and process
+	for (const FHWDiagramEvent& Event : InData.Events)
+	{
+		// Create a JSON object for the event
+		TSharedRef<FJsonObject> JsonEventObject = MakeShareable(new FJsonObject);
+
+		// Add time and amount to the JSON
+		JsonEventObject->SetNumberField(TEXT("Time"), Event.Time);
+		JsonEventObject->SetNumberField(TEXT("Amount"), Event.Amount);
+
+		// Create a JSON array object for the Texts array
+		TArray<TSharedPtr<FJsonValue>> JsonTextsArray;
+
+		// Loop through each text and process
+		for (const FHWDiagramEventText& EventText : Event.Texts)
+		{
+			// Create a JSON object for the text
+			TSharedRef<FJsonObject> JsonTextObject = MakeShareable(new FJsonObject);
+
+			// Add text, label color, and highlight to the JSON
+			JsonTextObject->SetStringField(TEXT("Text"), EventText.Text);
+			JsonTextObject->SetStringField(TEXT("LabelColor"), EventText.LabelColor.ToString());
+			JsonTextObject->SetBoolField(TEXT("bHighlight"), EventText.bHighlight);
+
+			// Add the text object to the array
+			JsonTextsArray.Add(MakeShareable(new FJsonValueObject(JsonTextObject)));
+		}
+
+		// Add the texts array to the event object
+		JsonEventObject->SetArrayField(TEXT("Texts"), JsonTextsArray);
+
+		// Add the event object to the array
+		JsonEventsArray.Add(MakeShareable(new FJsonValueObject(JsonEventObject)));
+	}
+
+	// Add the events array to the root object
+	JsonRoot->SetArrayField(TEXT("Events"), JsonEventsArray);
+	return JsonRoot;
+}
+
+void UHWFunctionLibrary::ExportDiagramDataAsJson(const FHWDiagramData& InData, const FString& Filename)
+{
+	TSharedRef<FJsonObject> JsonObject = ConvertDiagramDataToJsonObject(InData);
+
+	// Serialize to JSON string
+	FString OutputString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(JsonObject, Writer);
+
+	// Save to file
+	FFileHelper::SaveStringToFile(OutputString, *Filename);
+}
+
+////////////////////
+///// String Converter
+
+FString UHWFunctionLibrary::Conv_HWDiagramDataToString(const FHWDiagramData& InData)
+{
+	return InData.ToString();
+}

@@ -10,7 +10,7 @@ public class HelpWriter : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "DebugLogPlugin", "Slate", "SlateCore", "UMG", "ImageWriteQueue", "RenderCore" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "DebugLogPlugin", "Slate", "SlateCore", "UMG", "ImageWriteQueue", "RenderCore", "Json", "JsonUtilities" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

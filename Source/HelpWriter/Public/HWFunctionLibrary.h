@@ -90,4 +90,16 @@ protected:
 public:
     UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|Exporter")
     static void ExportWidgetToImage(UUserWidget* Widget, const FString& Filename, const FVector2D& DrawSize, const float Scale = 1.f, const EDesiredImageFormat Format = EDesiredImageFormat::PNG, const bool bOverwriteFile = true, const bool bAsync = true, const TextureFilter Filter = TF_Bilinear, const bool bUseGammaCorrection = true);
+
+public:
+    static TSharedRef<FJsonObject> ConvertDiagramDataToJsonObject(const FHWDiagramData& InData);
+
+    UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|Exporter")
+    static void ExportDiagramDataAsJson(const FHWDiagramData& InData, const FString& Filename);
+
+    ////////////////////
+    ///// String Converter
+public:
+    UFUNCTION(BlueprintPure, meta = (DisplayName = "To String (Integer)", CompactNodeTitle = "->", BlueprintAutocast), Category = "HWFunctionLibrary|String")
+    static FString Conv_HWDiagramDataToString(const FHWDiagramData& InData);
 };
