@@ -75,17 +75,6 @@ protected:
     static void* GetWindowHandle();
 
     ////////////////////
-    ///// CSV Parser
-public:
-    // Read the selected CSV file and return the parsed data
-    UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|CSV")
-    static bool ReadCSVFile(const FString& FilePath, TArray<FScenarioData>& OutTableData);
-
-protected:
-    // Helper function to parse a single row of the CSV
-    static bool ParseCSVRow(const FString& Row, FScenarioData& OutRowData);
-
-    ////////////////////
     ///// Importer/Exporter
 public:
     UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|Exporter")
