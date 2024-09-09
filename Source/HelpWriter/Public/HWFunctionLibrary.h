@@ -86,7 +86,7 @@ protected:
     static bool ParseCSVRow(const FString& Row, FScenarioData& OutRowData);
 
     ////////////////////
-    ///// Exporter
+    ///// Importer/Exporter
 public:
     UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|Exporter")
     static void ExportWidgetToImage(UUserWidget* Widget, const FString& Filename, const FVector2D& DrawSize, const float Scale = 1.f, const EDesiredImageFormat Format = EDesiredImageFormat::PNG, const bool bOverwriteFile = true, const bool bAsync = true, const TextureFilter Filter = TF_Bilinear, const bool bUseGammaCorrection = true);
@@ -96,6 +96,11 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|Exporter")
     static void ExportDiagramDataAsJson(const FHWDiagramData& InData, const FString& Filename);
+
+    static FHWDiagramData ConvertJsonObjectToDiagramData(TSharedPtr<FJsonObject> InJsonObject);
+
+    UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|Importer")
+    static bool ImportDiagramDataFromJson(const FString& FilePath, FHWDiagramData& OutData);
 
     ////////////////////
     ///// String Converter

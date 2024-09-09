@@ -205,7 +205,7 @@ bool UHWFunctionLibrary::ParseCSVRow(const FString& Row, FScenarioData& OutRowDa
 }
 
 ////////////////////
-///// Exporter
+///// Importer/Exporter
 
 void UHWFunctionLibrary::ExportWidgetToImage(UUserWidget* Widget, const FString& Filename, const FVector2D& DrawSize, const float Scale, const EDesiredImageFormat Format, const bool bOverwriteFile, const bool bAsync, const TextureFilter Filter, const bool bUseGammaCorrection)
 {
@@ -296,6 +296,98 @@ void UHWFunctionLibrary::ExportDiagramDataAsJson(const FHWDiagramData& InData, c
 
 	// Save to file
 	FFileHelper::SaveStringToFile(OutputString, *Filename);
+}
+
+FHWDiagramData UHWFunctionLibrary::ConvertJsonObjectToDiagramData(TSharedPtr<FJsonObject> InJsonObject)
+{
+	FHWDiagramData Result;
+
+	// Parse the "Events" array
+	const TArray<TSharedPtr<FJsonValue>>* JsonEventsArray;
+	if (InJsonObject->TryGetArrayField(TEXT("Events"), JsonEventsArray))
+	{
+		for (const TSharedPtr<FJsonValue>& EventValue : *JsonEventsArray)
+		{
+			const TSharedPtr<FJsonObject> EventObject = EventValue->AsObject();
+			if (!EventObject.IsValid())
+			{
+				continue;
+			}
+
+			FHWDiagramEvent NewEvent;
+
+			// Parse "Time" and "Amount"
+			EventObject->TryGetNumberField(TEXT("Time"), NewEvent.Time);
+			EventObject->TryGetNumberField(TEXT("Amount"), NewEvent.Amount);
+
+			// Parse the "Texts" array
+			const TArray<TSharedPtr<FJsonValue>>* JsonTextsArray;
+			if (EventObject->TryGetArrayField(TEXT("Texts"), JsonTextsArray))
+			{
+				for (const TSharedPtr<FJsonValue>& TextValue : *JsonTextsArray)
+				{
+					const TSharedPtr<FJsonObject> TextObject = TextValue->AsObject();
+					if (!TextObject.IsValid())
+					{
+						continue;
+					}
+
+					FHWDiagramEventText NewText;
+
+					// Parse "Text"
+					TextObject->TryGetStringField(TEXT("Text"), NewText.Text);
+
+					// Parse "LabelColor" and convert from string format (R=..., G=..., B=..., A=...)
+					FString LabelColorString;
+					if (TextObject->TryGetStringField(TEXT("LabelColor"), LabelColorString))
+					{
+						// Convert the color string to FLinearColor
+						FLinearColor ParsedColor;
+						ParsedColor.InitFromString(LabelColorString);  // FLinearColor::InitFromString parses (R=..., G=..., B=..., A=...) format
+						NewText.LabelColor = ParsedColor;
+					}
+
+					// Parse "bHighlight"
+					TextObject->TryGetBoolField(TEXT("bHighlight"), NewText.bHighlight);
+
+					// Add the parsed text to the event
+					NewEvent.Texts.Add(NewText);
+				}
+			}
+
+			// Add the parsed event to the output data
+			Result.Events.Add(NewEvent);
+		}
+	}
+
+	return Result;
+}
+
+bool UHWFunctionLibrary::ImportDiagramDataFromJson(const FString& FilePath, FHWDiagramData& OutData)
+{
+	// Load the file content into a string
+	FString FileContent;
+	if (!FFileHelper::LoadFileToString(FileContent, *FilePath))
+	{
+		// Failed to load the file
+		return false;
+	}
+
+	// Create a JSON reader
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(FileContent);
+	TSharedPtr<FJsonObject> JsonObject;
+
+	// Try to parse the JSON data
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject) || !JsonObject.IsValid())
+	{
+		// Failed to parse JSON
+		return false;
+	}
+
+	OutData = ConvertJsonObjectToDiagramData(JsonObject);
+
+	// Import was successful
+	return true;
 }
 
 ////////////////////

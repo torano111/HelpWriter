@@ -29,4 +29,8 @@ public:
 	// Get data of the table. This may be used for export.
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "HWTableWidgetInterface")
 	FHWDiagramData GetHWDiagramData(const FHWDiagramData& InData);
+
+	// Load data of the table. This may be used for import.
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "HWTableWidgetInterface")
+	void LoadHWDiagramData(const FHWDiagramData& InData);
 };
