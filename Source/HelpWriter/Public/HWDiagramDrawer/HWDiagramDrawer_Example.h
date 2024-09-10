@@ -15,5 +15,5 @@ class HELPWRITER_API UHWDiagramDrawer_Example : public UHWDiagramDrawerBase
 	GENERATED_BODY()
 	
 public:
-	virtual void Draw_Implementation(FPaintContext Context, FHWDiagramSettings DiagramSettings, FHWDiagramData DiagramData) override;
+	virtual void Draw_Implementation(FPaintContext Context, const FHWDiagramSettings& DiagramSettings, const FHWDiagramData& DiagramData) override;
 };

@@ -3,7 +3,7 @@
 #include "HWDiagramDrawer/HWDiagramDrawer_Example.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
-void UHWDiagramDrawer_Example::Draw_Implementation(FPaintContext Context, FHWDiagramSettings DiagramSettings, FHWDiagramData DiagramData)
+void UHWDiagramDrawer_Example::Draw_Implementation(FPaintContext Context, const FHWDiagramSettings& DiagramSettings, const FHWDiagramData& DiagramData)
 {
 	TArray<FVector2D> LinePoints;
 	LinePoints.Add(FVector2D(0, 0));
