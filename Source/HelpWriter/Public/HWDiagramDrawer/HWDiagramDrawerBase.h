@@ -20,7 +20,7 @@ class HELPWRITER_API UHWDiagramDrawerBase : public UObject
 	
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "HWDiagramDrawer")
-	void Draw(FPaintContext Context, FHWDiagramSettings DiagramSettings);
+	void Draw(FPaintContext Context, FHWDiagramSettings DiagramSettings, FHWDiagramData DiagramData);
 
-	virtual void Draw_Implementation(FPaintContext Context, FHWDiagramSettings DiagramSettings);
+	virtual void Draw_Implementation(FPaintContext Context, FHWDiagramSettings DiagramSettings, FHWDiagramData DiagramData) { };
 };

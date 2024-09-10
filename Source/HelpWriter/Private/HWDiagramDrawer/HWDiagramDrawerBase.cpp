@@ -3,6 +3,3 @@
 
 #include "HWDiagramDrawer/HWDiagramDrawerBase.h"
 
-void UHWDiagramDrawerBase::Draw_Implementation(FPaintContext Context, FHWDiagramSettings DiagramSettings)
-{
-}

@@ -3,6 +3,8 @@
 #include "HWDiagramWidgetBase.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "HWDiagramDrawer/HWDiagramDrawerBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "HWGameMode.h"
 #include "DebugLog.h"
 
 UHWDiagramWidgetBase::UHWDiagramWidgetBase(const FObjectInitializer& ObjectInitializer)
@@ -50,8 +52,9 @@ int32 UHWDiagramWidgetBase::NativePaint(const FPaintArgs& Args, const FGeometry&
 
 void UHWDiagramWidgetBase::Draw(FPaintContext Context) const
 {
-	if (bShowDiagram && DiagramDrawer != nullptr)
+	AHWGameMode* GM = Cast<AHWGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (bShowDiagram && DiagramDrawer != nullptr && GM)
 	{
-		DiagramDrawer->Draw(Context, DiagramSettings);
+		DiagramDrawer->Draw(Context, DiagramSettings, GM->DiagramData);
 	}
 }
