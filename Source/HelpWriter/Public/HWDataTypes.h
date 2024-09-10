@@ -5,6 +5,26 @@
 #include "CoreMinimal.h"
 #include "HWDataTypes.generated.h"
 
+
+USTRUCT(BlueprintType)
+struct HELPWRITER_API FHWDiagramSettings
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "256.0", ClampMax = "2048.0", UIMin = "256.0", UIMax = "2048.0"), Category = "HWDiagramWidgetBase")
+	FVector2D Size = FVector2D(1024.f, 1024.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	UFont* DefaultTextFont;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	FName DefaultTextFontTypeFace;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	class USlateBrushAsset* DefaultBackgroundBrush;
+};
+
 USTRUCT(BlueprintType)
 struct HELPWRITER_API FHWDiagramEventText
 {
