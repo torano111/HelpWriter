@@ -25,7 +25,10 @@ public:
 	float AxisThickness = 1.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"), Category = "HWDiagramDrawer|VerticalTimeline|Axis")
 	FLinearColor AxisColor = FLinearColor::Black;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"), Category = "HWDiagramDrawer|VerticalTimeline|Axis")
+	float MarkOnAxisSize = 0.05f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"), Category = "HWDiagramDrawer|VerticalTimeline|Axis")
+	float TimeX = 0.15f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"), Category = "HWDiagramDrawer|VerticalTimeline|EventText")
 	float EventTextX = 0.25f;

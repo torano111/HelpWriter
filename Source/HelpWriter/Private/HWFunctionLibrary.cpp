@@ -18,6 +18,9 @@
 #include "Widgets/SWidget.h"
 #include "Slate/WidgetRenderer.h"
 #include "ImageWriteBlueprintLibrary.h"
+#include "Fonts/SlateFontInfo.h"
+#include "Fonts/FontMeasure.h"
+#include "Engine/Font.h"
 
 ////////////////////
 ///// File Dialog
@@ -326,4 +329,15 @@ void UHWFunctionLibrary::SortEventsByAmount(FHWDiagramData& InData, bool bAscend
 FString UHWFunctionLibrary::Conv_HWDiagramDataToString(const FHWDiagramData& InData)
 {
 	return InData.ToString();
+}
+
+////////////////////
+///// Widget Utils
+
+FVector2D UHWFunctionLibrary::GetTextSize(const FString& Text, float FontSize, UFont* Font, FName FontTypeFace)
+{
+	FSlateFontInfo FontInfo(Font, FontSize, FontTypeFace);
+
+	TSharedRef<FSlateFontMeasure> FontMeasureService = FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+	return FontMeasureService->Measure(Text, FontInfo);
 }

@@ -105,4 +105,9 @@ public:
 public:
     UFUNCTION(BlueprintPure, meta = (DisplayName = "To String (Integer)", CompactNodeTitle = "->", BlueprintAutocast), Category = "HWFunctionLibrary|String")
     static FString Conv_HWDiagramDataToString(const FHWDiagramData& InData);
+
+    ////////////////////
+    ///// Widget Utils
+    UFUNCTION(BlueprintPure, Category = "HWFunctionLibrary|Widget")
+    static FVector2D GetTextSize(const FString& Text, float FontSize, UFont* Font, FName FontTypeFace);
 };
