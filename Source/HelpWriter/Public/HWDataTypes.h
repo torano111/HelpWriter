@@ -13,7 +13,10 @@ struct HELPWRITER_API FHWDiagramSettings
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "256.0", ClampMax = "2048.0", UIMin = "256.0", UIMax = "2048.0"), Category = "HWDiagramWidgetBase")
-	FVector2D Size = FVector2D(1024.f, 1024.f);
+	FVector2D DiagramSize = FVector2D(1024.f, 1024.f);
+
+	UPROPERTY(BlueprintReadWrite)
+	float EventTextSize = 16.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
 	UFont* DefaultTextFont;
