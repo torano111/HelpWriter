@@ -92,6 +92,15 @@ public:
     static bool ImportDiagramDataFromJson(const FString& FilePath, FHWDiagramData& OutData);
 
     ////////////////////
+    ///// HWDiagramData
+public:
+    UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|HWDiagramData")
+    static void SortEventsByTime(UPARAM(ref) FHWDiagramData& InData, bool bAscendingOrder);
+
+    UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|HWDiagramData")
+    static void SortEventsByAmount(UPARAM(ref) FHWDiagramData& InData, bool bAscendingOrder);
+
+    ////////////////////
     ///// String Converter
 public:
     UFUNCTION(BlueprintPure, meta = (DisplayName = "To String (Integer)", CompactNodeTitle = "->", BlueprintAutocast), Category = "HWFunctionLibrary|String")

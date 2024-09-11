@@ -308,6 +308,19 @@ bool UHWFunctionLibrary::ImportDiagramDataFromJson(const FString& FilePath, FHWD
 }
 
 ////////////////////
+///// HWDiagramData
+
+void UHWFunctionLibrary::SortEventsByTime(FHWDiagramData& InData, bool bAscendingOrder)
+{
+	InData.SortEventsByTime(bAscendingOrder);
+}
+
+void UHWFunctionLibrary::SortEventsByAmount(FHWDiagramData& InData, bool bAscendingOrder)
+{
+	InData.SortEventsByAmount(bAscendingOrder);
+}
+
+////////////////////
 ///// String Converter
 
 FString UHWFunctionLibrary::Conv_HWDiagramDataToString(const FHWDiagramData& InData)

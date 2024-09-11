@@ -120,4 +120,18 @@ public:
 
 		return Result;
 	}
+
+	void SortEventsByTime(bool bAscendingOrder)
+	{
+		Events.Sort([bAscendingOrder](const FHWDiagramEvent& A, const FHWDiagramEvent& B) {
+			return bAscendingOrder ? A.Time < B.Time : A.Time > B.Time;
+			});
+	}
+
+	void SortEventsByAmount(bool bAscendingOrder)
+	{
+		Events.Sort([bAscendingOrder](const FHWDiagramEvent& A, const FHWDiagramEvent& B) {
+			return bAscendingOrder ? A.Amount < B.Amount : A.Amount > B.Amount;
+			});
+	}
 };
