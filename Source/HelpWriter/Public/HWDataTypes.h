@@ -5,6 +5,13 @@
 #include "CoreMinimal.h"
 #include "HWDataTypes.generated.h"
 
+UENUM(BlueprintType)
+enum class EDividerLine : uint8
+{
+	DL_None UMETA(DisplayName = "None"),
+	DL_Dotted UMETA(DisplayName = "Dotted"),
+	DL_Solid UMETA(DisplayName = "Solid")
+};
 
 USTRUCT(BlueprintType)
 struct HELPWRITER_API FHWDiagramSettings
@@ -101,6 +108,34 @@ public:
 			, *FString::SanitizeFloat(Amount)
 		);
 		return Result;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct HELPWRITER_API FHWDiagramTimeSegment
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	FHWDiagramEventText Text;
+
+	UPROPERTY(BlueprintReadWrite)
+	float Start;
+
+	UPROPERTY(BlueprintReadWrite)
+	float End;
+
+	UPROPERTY(BlueprintReadWrite)
+	EDividerLine DividerLine_Start = EDividerLine::DL_Solid;
+
+	UPROPERTY(BlueprintReadWrite)
+	EDividerLine DividerLine_End = EDividerLine::DL_Solid;
+
+	FString ToString() const
+	{
+		// todo
+		return FString();
 	}
 };
 
