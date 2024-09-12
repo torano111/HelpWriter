@@ -43,4 +43,7 @@ public:
 	UHWDiagramDrawer_VerticalTimeline(const FObjectInitializer& ObjectInitializer);
 
 	virtual void Draw_Implementation(FPaintContext Context, const FHWDiagramSettings& DiagramSettings, const FHWDiagramData& DiagramData) override;
+
+	// Draw Time and its mark on the axis
+	void DrawTimeAndTimeMark(FPaintContext Context, const FHWDiagramSettings& DiagramSettings, float Time, float Y);
 };

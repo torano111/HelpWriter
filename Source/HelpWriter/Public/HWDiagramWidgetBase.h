@@ -19,7 +19,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "HWDiagramWidgetBase")
 	bool bShowDiagram;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HWDiagramWidgetBase")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
 	FHWDiagramSettings DiagramSettings;
 
 	UPROPERTY(EditAnywhere, Category = "HWDiagramWidgetBase")

@@ -19,6 +19,18 @@ public:
 	float EventTextSize = 16.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	bool bShowMinTime = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	float MinTime = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	bool bShowMaxTime = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	float MaxTime = 100.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
 	UFont* DefaultTextFont;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
