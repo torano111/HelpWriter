@@ -73,8 +73,9 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 		}
 
 		// Draw event texts
-		for (const FHWDiagramEventText& EventText : Event.Texts)
+		for (int TxtIdx = 0; TxtIdx < Event.Texts.Num(); ++TxtIdx)
 		{
+			const FHWDiagramEventText& EventText = Event.Texts[TxtIdx];
 			FString Text = EventText.Text;
 			FLinearColor LabelColor = EventText.LabelColor;
 			bool bHighlight = EventText.bHighlight;
@@ -83,7 +84,8 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 
 			FVector2D DrawPos;
 			DrawPos.X = TextPosX;
-			DrawPos.Y = TimeY - TextSize.Y * 0.5f;	// offset with a half text size because top left corner of the first character will be placed at the position.
+			const float TextOffsetY = (TextSize.Y + EventTextSpace) * (TxtIdx - (float)Event.Texts.Num() / 2.f) + EventTextSpace / 2.f;
+			DrawPos.Y = TimeY + TextOffsetY;
 			UWidgetBlueprintLibrary::DrawTextFormatted(Context, FText::FromString(Text), DrawPos, DiagramSettings.DefaultTextFont, DiagramSettings.EventTextSize, DiagramSettings.DefaultTextFontTypeFace, DefaultEventTextColor);
 		}
 	}

@@ -38,6 +38,8 @@ public:
 	float EventTextY_End = 0.8f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HWDiagramDrawer|VerticalTimeline|EventText")
 	FLinearColor DefaultEventTextColor = FLinearColor::Black;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HWDiagramDrawer|VerticalTimeline|EventText")
+	float EventTextSpace = 0.f;
 	
 public:
 	UHWDiagramDrawer_VerticalTimeline(const FObjectInitializer& ObjectInitializer);
