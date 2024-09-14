@@ -39,5 +39,6 @@ public:
 	static void OutputError(const FString& InString = FString(TEXT("Hello")), bool bPrintToScreen = true, bool bPrintToLog = true, float Duration = 2.f, FLinearColor TextColor = FLinearColor(1.0, 0.0, 0.0));
 };
 
-// Helper macro to convert UEnum (enum class ECustomName : uint8) to FString
+// Helper macros for UEnum (enum class ECustomName : uint8) - FString conversion
 #define EnumToString(EnumType, Value) StaticEnum<EnumType>()->GetNameStringByValue((int64)Value)
+#define StringToEnum(EnumType, Value) (EnumType)StaticEnum<EnumType>()->GetValueByNameString(Value)

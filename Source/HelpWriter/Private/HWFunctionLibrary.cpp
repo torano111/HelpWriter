@@ -159,6 +159,8 @@ void UHWFunctionLibrary::ExportWidgetToImage(UUserWidget* Widget, const FString&
 
 TSharedRef<FJsonObject> UHWFunctionLibrary::ConvertDiagramDataToJsonObject(const FHWDiagramData& InData)
 {
+	// Events
+	
 	// Create the root JSON object
 	TSharedRef<FJsonObject> JsonRoot = MakeShareable(new FJsonObject);
 
@@ -202,6 +204,45 @@ TSharedRef<FJsonObject> UHWFunctionLibrary::ConvertDiagramDataToJsonObject(const
 
 	// Add the events array to the root object
 	JsonRoot->SetArrayField(TEXT("Events"), JsonEventsArray);
+
+
+
+	// Segments
+
+	// Create a JSON array object for the Segments array
+	TArray<TSharedPtr<FJsonValue>> JsonSegmentsArray;
+
+	// Loop through each segment and process
+	for (const FHWDiagramTimeSegment& Segment : InData.Segments)
+	{
+		// Create a JSON object for the segment
+		TSharedRef<FJsonObject> JsonSegmentObject = MakeShareable(new FJsonObject);
+
+		// Add start and end times
+		JsonSegmentObject->SetNumberField(TEXT("Start"), Segment.Start);
+		JsonSegmentObject->SetNumberField(TEXT("End"), Segment.End);
+
+		// Add divider lines
+		JsonSegmentObject->SetStringField(TEXT("DividerLine_Start"), EnumToString(EDividerLine, Segment.DividerLine_Start));
+		JsonSegmentObject->SetStringField(TEXT("DividerLine_End"), EnumToString(EDividerLine, Segment.DividerLine_End));
+
+		// Process and add the text
+		TSharedRef<FJsonObject> JsonTextObject = MakeShareable(new FJsonObject);
+		JsonTextObject->SetStringField(TEXT("Text"), Segment.Text.Text);
+		JsonTextObject->SetStringField(TEXT("LabelColor"), Segment.Text.LabelColor.ToString());
+		JsonTextObject->SetBoolField(TEXT("bHighlight"), Segment.Text.bHighlight);
+
+		// Add the text object to the segment
+		JsonSegmentObject->SetObjectField(TEXT("Text"), JsonTextObject);
+
+		// Add the segment object to the array
+		JsonSegmentsArray.Add(MakeShareable(new FJsonValueObject(JsonSegmentObject)));
+	}
+
+	// Add the segments array to the root object
+	JsonRoot->SetArrayField(TEXT("Segments"), JsonSegmentsArray);
+
+
 	return JsonRoot;
 }
 
@@ -221,6 +262,8 @@ void UHWFunctionLibrary::ExportDiagramDataAsJson(const FHWDiagramData& InData, c
 FHWDiagramData UHWFunctionLibrary::ConvertJsonObjectToDiagramData(TSharedPtr<FJsonObject> InJsonObject)
 {
 	FHWDiagramData Result;
+
+	// Events
 
 	// Parse the "Events" array
 	const TArray<TSharedPtr<FJsonValue>>* JsonEventsArray;
@@ -279,6 +322,70 @@ FHWDiagramData UHWFunctionLibrary::ConvertJsonObjectToDiagramData(TSharedPtr<FJs
 			Result.Events.Add(NewEvent);
 		}
 	}
+
+
+
+	// Segments
+	
+	// Parse the "Segments" array
+	const TArray<TSharedPtr<FJsonValue>>* JsonSegmentsArray;
+	if (InJsonObject->TryGetArrayField(TEXT("Segments"), JsonSegmentsArray))
+	{
+		for (const TSharedPtr<FJsonValue>& SegmentValue : *JsonSegmentsArray)
+		{
+			const TSharedPtr<FJsonObject> SegmentObject = SegmentValue->AsObject();
+			if (!SegmentObject.IsValid())
+			{
+				continue;
+			}
+
+			FHWDiagramTimeSegment NewSegment;
+
+			// Parse "Start" and "End"
+			SegmentObject->TryGetNumberField(TEXT("Start"), NewSegment.Start);
+			SegmentObject->TryGetNumberField(TEXT("End"), NewSegment.End);
+
+			// Parse divider lines
+			FString DividerLineStartString, DividerLineEndString;
+			if (SegmentObject->TryGetStringField(TEXT("DividerLine_Start"), DividerLineStartString))
+			{
+				NewSegment.DividerLine_Start = StringToEnum(EDividerLine, DividerLineStartString);
+			}
+			if (SegmentObject->TryGetStringField(TEXT("DividerLine_End"), DividerLineEndString))
+			{
+				NewSegment.DividerLine_End = StringToEnum(EDividerLine, DividerLineEndString);
+			}
+
+			// Parse the "Text" object
+			const TSharedPtr<FJsonObject> TextObject = SegmentObject->GetObjectField(TEXT("Text"));
+			if (TextObject.IsValid())
+			{
+				FHWDiagramEventText NewText;
+
+				// Parse "Text"
+				TextObject->TryGetStringField(TEXT("Text"), NewText.Text);
+
+				// Parse "LabelColor" and convert from string format
+				FString LabelColorString;
+				if (TextObject->TryGetStringField(TEXT("LabelColor"), LabelColorString))
+				{
+					FLinearColor ParsedColor;
+					ParsedColor.InitFromString(LabelColorString);
+					NewText.LabelColor = ParsedColor;
+				}
+
+				// Parse "bHighlight"
+				TextObject->TryGetBoolField(TEXT("bHighlight"), NewText.bHighlight);
+
+				// Assign parsed text to the segment
+				NewSegment.Text = NewText;
+			}
+
+			// Add the parsed segment to the output data
+			Result.Segments.Add(NewSegment);
+		}
+	}
+
 
 	return Result;
 }
