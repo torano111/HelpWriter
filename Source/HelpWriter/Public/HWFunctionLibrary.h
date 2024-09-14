@@ -100,6 +100,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|HWDiagramData")
     static void SortEventsByAmount(UPARAM(ref) FHWDiagramData& InData, bool bAscendingOrder);
 
+    UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|HWDiagramData")
+    static void SortSegmentsByStart(UPARAM(ref) FHWDiagramData& InData, bool bAscendingOrder);
+
+    UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|HWDiagramData")
+    static void SortSegmentsByEnd(UPARAM(ref) FHWDiagramData& InData, bool bAscendingOrder);
+
     ////////////////////
     ///// String Converter
 public:

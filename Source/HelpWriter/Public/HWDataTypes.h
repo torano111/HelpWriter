@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DebugLog.h"
 #include "HWDataTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -134,8 +135,13 @@ public:
 
 	FString ToString() const
 	{
-		// todo
-		return FString();
+		return FString::Printf(TEXT("%s, Range=[%s,%s], DividerLine=[%s,%s]")
+			, *Text.ToString()
+			, *FString::SanitizeFloat(Start)
+			, *FString::SanitizeFloat(End)
+			, *(EnumToString(EDividerLine, DividerLine_Start))
+			, *(EnumToString(EDividerLine, DividerLine_End))
+		);
 	}
 };
 
@@ -171,6 +177,22 @@ public:
 			Result += "None\n";
 		}
 
+		// Segments
+		Result += "Segments:";
+		if (Segments.Num() > 0)
+		{
+			Result += "\n";
+			for (int I = 0; I < Segments.Num(); ++I)
+			{
+				const auto& S = Segments[I];
+				Result += S.ToString() + "\n";
+			}
+		}
+		else
+		{
+			Result += "None\n";
+		}
+
 		return Result;
 	}
 
@@ -185,6 +207,20 @@ public:
 	{
 		Events.Sort([bAscendingOrder](const FHWDiagramEvent& A, const FHWDiagramEvent& B) {
 			return bAscendingOrder ? A.Amount < B.Amount : A.Amount > B.Amount;
+			});
+	}
+
+	void SortSegmentsByStart(bool bAscendingOrder)
+	{
+		Segments.Sort([bAscendingOrder](const FHWDiagramTimeSegment& A, const FHWDiagramTimeSegment& B) {
+			return bAscendingOrder ? A.Start < B.Start : A.Start > B.Start;
+			});
+	}
+
+	void SortSegmentsByEnd(bool bAscendingOrder)
+	{
+		Segments.Sort([bAscendingOrder](const FHWDiagramTimeSegment& A, const FHWDiagramTimeSegment& B) {
+			return bAscendingOrder ? A.End < B.End : A.End > B.End;
 			});
 	}
 };

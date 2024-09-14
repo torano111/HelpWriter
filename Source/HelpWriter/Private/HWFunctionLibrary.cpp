@@ -326,6 +326,16 @@ void UHWFunctionLibrary::SortEventsByAmount(FHWDiagramData& InData, bool bAscend
 ////////////////////
 ///// String Converter
 
+void UHWFunctionLibrary::SortSegmentsByStart(UPARAM(ref)FHWDiagramData& InData, bool bAscendingOrder)
+{
+	InData.SortSegmentsByStart(bAscendingOrder);
+}
+
+void UHWFunctionLibrary::SortSegmentsByEnd(UPARAM(ref)FHWDiagramData& InData, bool bAscendingOrder)
+{
+	InData.SortSegmentsByEnd(bAscendingOrder);
+}
+
 FString UHWFunctionLibrary::Conv_HWDiagramDataToString(const FHWDiagramData& InData)
 {
 	return InData.ToString();
