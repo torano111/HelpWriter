@@ -18,6 +18,19 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 	const FVector2D Axis_End = FVector2D(DiagramSettings.DiagramSize.X * AxisX, DiagramSettings.DiagramSize.Y * AxisY_End);
 	UWidgetBlueprintLibrary::DrawLine(Context, Axis_Start, Axis_End, AxisColor, true, AxisThickness);
 
+	// Time Segments
+
+	float TimeSegmentOffsetX = 0;
+
+	// todo draw time segments and calculate TimeSegmentOffsetX
+	for (auto TS : DiagramData.Segments)
+	{
+
+	}
+
+
+	// Events
+
 	// Calculate Time Min/Max and Amount Min/Max.
 	float Time_Min = DiagramSettings.bShowMinTime ? DiagramSettings.MinTime : FLT_MAX;
 	float Time_Max = DiagramSettings.bShowMaxTime ? DiagramSettings.MaxTime : FLT_MIN;

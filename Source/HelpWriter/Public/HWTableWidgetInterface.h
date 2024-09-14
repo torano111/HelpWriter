@@ -33,4 +33,12 @@ public:
 	// Notify the change of the table data.
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "HWTableWidgetInterface")
 	void NotifyTableDataUpdate();
+
+	// add new default element to the table
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "HWTableWidgetInterface")
+	void AddDefaultTableElement();
+
+	// remove all elements in the table
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "HWTableWidgetInterface")
+	void RemoveAllTableElements();
 };

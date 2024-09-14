@@ -148,6 +148,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FHWDiagramEvent> Events;
 
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FHWDiagramTimeSegment> Segments;
+
 	FString ToString() const
 	{
 		FString Result = "";
