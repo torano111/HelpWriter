@@ -21,6 +21,7 @@
 #include "Fonts/SlateFontInfo.h"
 #include "Fonts/FontMeasure.h"
 #include "Engine/Font.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 ////////////////////
 ///// File Dialog
@@ -457,4 +458,31 @@ FVector2D UHWFunctionLibrary::GetTextSize(const FString& Text, float FontSize, U
 
 	TSharedRef<FSlateFontMeasure> FontMeasureService = FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
 	return FontMeasureService->Measure(Text, FontInfo);
+}
+
+void UHWFunctionLibrary::DrawDottedLine(UPARAM(ref)FPaintContext& Context, FVector2D PositionA, FVector2D PositionB, float Size, FLinearColor Tint, bool bAntiAlias, float Thickness)
+{
+	FVector2D Direction = (PositionB - PositionA).GetSafeNormal(); // Normalize the direction vector from PositionA to PositionB
+	float TotalLength = FVector2D::Distance(PositionA, PositionB); // Calculate the total distance between A and B
+	int32 NumSegments = FMath::FloorToInt(TotalLength / (Size * 2)); // Calculate the number of segments (line and gap)
+
+	FVector2D StartPos = PositionA;
+
+	for (int32 i = 0; i < NumSegments; i++)
+	{
+		// The end point is the start point + line segment length * direction
+		FVector2D EndPos = StartPos + Direction * Size;
+
+		// Draw one segment of the dotted line
+		UWidgetBlueprintLibrary::DrawLine(Context, StartPos, EndPos, Tint, bAntiAlias, Thickness);
+
+		// The next start point skips the gap
+		StartPos = EndPos + Direction * Size;
+	}
+
+	// If there is a remaining part, draw the last segment
+	if (FVector2D::Distance(StartPos, PositionB) > 0)
+	{
+		UWidgetBlueprintLibrary::DrawLine(Context, StartPos, PositionB, Tint, bAntiAlias, Thickness);
+	}
 }

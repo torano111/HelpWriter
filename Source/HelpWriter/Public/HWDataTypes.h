@@ -9,9 +9,9 @@
 UENUM(BlueprintType)
 enum class EDividerLine : uint8
 {
-	DL_None UMETA(DisplayName = "None"),
-	DL_Dotted UMETA(DisplayName = "Dotted"),
-	DL_Solid UMETA(DisplayName = "Solid")
+	DL_None = 0 UMETA(DisplayName = "None"),
+	DL_Dotted = 1 UMETA(DisplayName = "Dotted"),
+	DL_Solid = 2 UMETA(DisplayName = "Solid")
 };
 
 USTRUCT(BlueprintType)

@@ -116,4 +116,7 @@ public:
     ///// Widget Utils
     UFUNCTION(BlueprintPure, Category = "HWFunctionLibrary|Widget")
     static FVector2D GetTextSize(const FString& Text, float FontSize, UFont* Font, FName FontTypeFace);
+
+    UFUNCTION(BlueprintCallable, Category = "HWFunctionLibrary|Widget")
+    static void DrawDottedLine(UPARAM(ref) FPaintContext& Context, FVector2D PositionA, FVector2D PositionB, float Size, FLinearColor Tint = FLinearColor::White, bool bAntiAlias = true, float Thickness = 1.0f);
 };
