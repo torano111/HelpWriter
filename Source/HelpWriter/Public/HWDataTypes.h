@@ -27,6 +27,12 @@ public:
 	float EventTextSize = 16.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	float TimeSegmentTextSize = 16.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	float TimeTextSize = 16.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
 	bool bShowMinTime = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")

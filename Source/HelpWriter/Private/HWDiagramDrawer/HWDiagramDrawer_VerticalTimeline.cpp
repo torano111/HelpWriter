@@ -54,7 +54,7 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 		if (Seg.DividerLine_Start != EDividerLine::DL_None && (StartLinePtr == nullptr || (uint8)(*StartLinePtr) < (uint8)Seg.DividerLine_Start)) DividerLinePositions.Add(Seg.Start, Seg.DividerLine_Start);
 		if (Seg.DividerLine_End != EDividerLine::DL_None && (EndLinePtr == nullptr || (uint8)(*EndLinePtr) < (uint8)Seg.DividerLine_End)) DividerLinePositions.Add(Seg.End, Seg.DividerLine_End);
 
-		const FVector2D SegTextSize = UHWFunctionLibrary::GetTextSize(Seg.Text.Text, DiagramSettings.EventTextSize, DiagramSettings.DefaultTextFont, DiagramSettings.DefaultTextFontTypeFace);
+		const FVector2D SegTextSize = UHWFunctionLibrary::GetTextSize(Seg.Text.Text, DiagramSettings.TimeSegmentTextSize, DiagramSettings.DefaultTextFont, DiagramSettings.DefaultTextFontTypeFace);
 
 		if (Seg.Text.Text.Len() > 0)
 		{
@@ -67,7 +67,7 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 			const float TimeSegmentSpace = TimeSegmentTextSpace * 2.f + SegTextSize.X;
 			if (TimeSegmentOffsetX < TimeSegmentSpace) TimeSegmentOffsetX = TimeSegmentSpace;
 
-			UWidgetBlueprintLibrary::DrawTextFormatted(Context, FText::FromString(Seg.Text.Text), SegTextPos, DiagramSettings.DefaultTextFont, DiagramSettings.EventTextSize, DiagramSettings.DefaultTextFontTypeFace, DefaultEventTextColor);
+			UWidgetBlueprintLibrary::DrawTextFormatted(Context, FText::FromString(Seg.Text.Text), SegTextPos, DiagramSettings.DefaultTextFont, DiagramSettings.TimeSegmentTextSize, DiagramSettings.DefaultTextFontTypeFace, DefaultEventTextColor);
 		}
 	}
 
@@ -179,9 +179,9 @@ void UHWDiagramDrawer_VerticalTimeline::DrawTimeAndTimeMark(FPaintContext Contex
 
 	// Time
 	FString Text = FString::SanitizeFloat(Time);
-	const FVector2D TextSize = UHWFunctionLibrary::GetTextSize(Text, DiagramSettings.EventTextSize, DiagramSettings.DefaultTextFont, DiagramSettings.DefaultTextFontTypeFace);
+	const FVector2D TextSize = UHWFunctionLibrary::GetTextSize(Text, DiagramSettings.TimeTextSize, DiagramSettings.DefaultTextFont, DiagramSettings.DefaultTextFontTypeFace);
 	FVector2D DrawPos;
 	DrawPos.X = Axis_Start.X - TimeOffsetX - TextSize.X;
 	DrawPos.Y = TimeY - TextSize.Y * 0.5f;	// offset with a half text size because top left corner of the first character will be placed at the position.
-	UWidgetBlueprintLibrary::DrawTextFormatted(Context, FText::FromString(Text), DrawPos, DiagramSettings.DefaultTextFont, DiagramSettings.EventTextSize, DiagramSettings.DefaultTextFontTypeFace, DefaultEventTextColor);
+	UWidgetBlueprintLibrary::DrawTextFormatted(Context, FText::FromString(Text), DrawPos, DiagramSettings.DefaultTextFont, DiagramSettings.TimeTextSize, DiagramSettings.DefaultTextFontTypeFace, DefaultEventTextColor);
 }
