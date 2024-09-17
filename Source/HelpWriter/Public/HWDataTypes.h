@@ -223,4 +223,50 @@ public:
 			return bAscendingOrder ? A.End < B.End : A.End > B.End;
 			});
 	}
+
+	void GetEventsRange(float& OutTimeMin, float& OutTimeMax, float& OutAmountMin, float& OutAmountMax) const
+	{
+		if (Events.IsEmpty())
+		{
+			OutTimeMin = 0;
+			OutTimeMax = 0;
+			OutAmountMin = 0;
+			OutAmountMax = 0;
+			return;
+		}
+
+		OutTimeMin = FLT_MAX;
+		OutTimeMax = FLT_MIN;
+		OutAmountMin = FLT_MAX;
+		OutAmountMax = FLT_MIN;
+		for (auto Event : Events)
+		{
+			if (Event.Time < OutTimeMin) OutTimeMin = Event.Time;
+			if (Event.Amount < OutAmountMin) OutAmountMin = Event.Amount;
+
+			if (Event.Time > OutTimeMax) OutTimeMax = Event.Time;
+			if (Event.Amount > OutAmountMax) OutAmountMax = Event.Amount;
+		}
+	}
+
+	void GetSegmentsRange(float& OutMin, float& OutMax) const
+	{
+		if (Segments.IsEmpty())
+		{
+			OutMin = 0;
+			OutMax = 0;
+			return;
+		}
+
+		OutMin = FLT_MAX;
+		OutMax = FLT_MIN;
+		for (auto Seg : Segments)
+		{
+			if (Seg.Start < OutMin) OutMin = Seg.Start;
+			if (Seg.End < OutMin) OutMin = Seg.End;
+
+			if (Seg.Start > OutMax) OutMax = Seg.Start;
+			if (Seg.End > OutMax) OutMax = Seg.End;
+		}
+	}
 };

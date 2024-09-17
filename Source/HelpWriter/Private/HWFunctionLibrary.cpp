@@ -339,6 +339,16 @@ void UHWFunctionLibrary::SortSegmentsByEnd(UPARAM(ref)FHWDiagramData& InData, bo
 	InData.SortSegmentsByEnd(bAscendingOrder);
 }
 
+void UHWFunctionLibrary::GetEventsRange(const FHWDiagramData& InData, float& OutTimeMin, float& OutTimeMax, float& OutAmountMin, float& OutAmountMax)
+{
+	InData.GetEventsRange(OutTimeMin, OutTimeMax, OutAmountMin, OutAmountMax);
+}
+
+void UHWFunctionLibrary::GetSegmentsRange(const FHWDiagramData& InData, float& OutMin, float& OutMax)
+{
+	InData.GetSegmentsRange(OutMin, OutMax);
+}
+
 ////////////////////
 ///// String Converter
 
