@@ -63,4 +63,6 @@ public:
 
 	// Draw Time and its mark on the axis
 	void DrawTimeAndTimeMark(FPaintContext Context, float Time, float MinTime, float MaxTime, const FHWDiagramSettings& DiagramSettings, const FHWDiagramData& DiagramData);
+
+	static void AddIfNotContainNearlyEqual(TArray<float>& Target, float Value, int32 MaxFracDigits);
 };

@@ -45,6 +45,9 @@ public:
 	float MaxTime = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
+	int32 TimeMaxFractionalDigits = 2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")
 	UFont* DefaultTextFont;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HWDiagramWidgetBase")

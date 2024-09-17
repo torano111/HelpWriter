@@ -12,6 +12,8 @@ UHWDiagramDrawer_VerticalTimeline::UHWDiagramDrawer_VerticalTimeline(const FObje
 
 void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Context, const FHWDiagramSettings& DiagramSettings, const FHWDiagramData& DiagramData)
 {
+	TArray<float> TimesToDraw;
+
 	// Draw the base axis
 	FVector2D Axis_Start, Axis_End;
 	GetBaseVerticalAxisInfo(Axis_Start, Axis_End, DiagramSettings);
@@ -98,14 +100,8 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 	if (bDrewSegText) UWidgetBlueprintLibrary::DrawLine(Context, Axis_Start + FVector2D(TimeSegmentOffsetX, 0.f), Axis_End + FVector2D(TimeSegmentOffsetX, 0.f), AxisColor, true, AxisThickness);
 
 	// Draw Min/Max Time if needed.
-	if (DiagramSettings.bShowMaxTime)
-	{
-		DrawTimeAndTimeMark(Context, DiagramSettings.MaxTime, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
-	}
-	if (DiagramSettings.bShowMinTime)
-	{
-		DrawTimeAndTimeMark(Context, DiagramSettings.MinTime, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
-	}
+	if (DiagramSettings.bShowMaxTime) AddIfNotContainNearlyEqual(TimesToDraw, DiagramSettings.MaxTime, DiagramSettings.TimeMaxFractionalDigits);
+	if (DiagramSettings.bShowMinTime) AddIfNotContainNearlyEqual(TimesToDraw, DiagramSettings.MinTime, DiagramSettings.TimeMaxFractionalDigits);
 
 	for (const FHWDiagramEvent& Event : DiagramData.Events)
 	{
@@ -113,15 +109,7 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 		float Amount = Event.Amount;
 		float TimeY = GetTimePosY(Time, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
 
-		// Draw Time and its mark on the axis if not drawen already
-		if (!(DiagramSettings.bShowMaxTime && FMath::IsNearlyEqual(DiagramSettings.MaxTime, Time)
-			|| DiagramSettings.bShowMinTime && FMath::IsNearlyEqual(DiagramSettings.MinTime, Time)))
-		{
-			if (Event.Texts.Num() > 0)
-			{
-				DrawTimeAndTimeMark(Context, Time, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
-			}
-		}
+		if (Event.Texts.Num() > 0) AddIfNotContainNearlyEqual(TimesToDraw, Time, DiagramSettings.TimeMaxFractionalDigits);
 
 		// Draw event texts
 		for (int TxtIdx = 0; TxtIdx < Event.Texts.Num(); ++TxtIdx)
@@ -139,6 +127,11 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 			DrawPos.Y = TimeY + TextOffsetY;
 			UWidgetBlueprintLibrary::DrawTextFormatted(Context, FText::FromString(Text), DrawPos, DiagramSettings.DefaultTextFont, DiagramSettings.EventTextSize, DiagramSettings.DefaultTextFontTypeFace, DefaultEventTextColor);
 		}
+	}
+
+	for (auto T : TimesToDraw)
+	{
+		DrawTimeAndTimeMark(Context, T, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
 	}
 }
 
@@ -178,10 +171,19 @@ void UHWDiagramDrawer_VerticalTimeline::DrawTimeAndTimeMark(FPaintContext Contex
 	UWidgetBlueprintLibrary::DrawLine(Context, MarkOnAxis_Start, MarkOnAxis_End, AxisColor, true, AxisThickness);
 
 	// Time
-	FString Text = FString::SanitizeFloat(Time);
-	const FVector2D TextSize = UHWFunctionLibrary::GetTextSize(Text, DiagramSettings.TimeTextSize, DiagramSettings.DefaultTextFont, DiagramSettings.DefaultTextFontTypeFace);
+	FText DrawText = FText::AsNumber(Time, &FNumberFormattingOptions().SetMinimumFractionalDigits(0).SetMaximumFractionalDigits(DiagramSettings.TimeMaxFractionalDigits));
+
+	const FVector2D TextSize = UHWFunctionLibrary::GetTextSize(DrawText.ToString(), DiagramSettings.TimeTextSize, DiagramSettings.DefaultTextFont, DiagramSettings.DefaultTextFontTypeFace);
 	FVector2D DrawPos;
 	DrawPos.X = Axis_Start.X - TimeOffsetX - TextSize.X;
 	DrawPos.Y = TimeY - TextSize.Y * 0.5f;	// offset with a half text size because top left corner of the first character will be placed at the position.
-	UWidgetBlueprintLibrary::DrawTextFormatted(Context, FText::FromString(Text), DrawPos, DiagramSettings.DefaultTextFont, DiagramSettings.TimeTextSize, DiagramSettings.DefaultTextFontTypeFace, DefaultEventTextColor);
+
+	UWidgetBlueprintLibrary::DrawTextFormatted(Context, DrawText, DrawPos, DiagramSettings.DefaultTextFont, DiagramSettings.TimeTextSize, DiagramSettings.DefaultTextFontTypeFace, DefaultEventTextColor);
+}
+
+void UHWDiagramDrawer_VerticalTimeline::AddIfNotContainNearlyEqual(TArray<float>& Target, float Value, int32 MaxFracDigits)
+{
+	const float Tolerance = 1.0f / FMath::Pow(10.0f, MaxFracDigits);
+	bool bContains = Target.ContainsByPredicate([Value, Tolerance](float Element) { return FMath::IsNearlyEqual(Element, Value, Tolerance); });
+	if (!bContains) Target.Add(Value);
 }
