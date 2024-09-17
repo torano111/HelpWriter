@@ -83,6 +83,8 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 		const FVector2D LineStart(Axis_Start.X, TimeY);
 		const FVector2D LineEnd(DiagramSettings.DiagramSize.X * HorizontalLineEndRatioX, TimeY);
 
+		AddIfNotContainNearlyEqual(TimesToDraw, HTime, DiagramSettings.TimeMaxFractionalDigits);
+
 		switch (LineType)
 		{
 		case EDividerLine::DL_Solid:
