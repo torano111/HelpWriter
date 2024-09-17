@@ -32,6 +32,11 @@ bool UEFDFunctionLibrary::SaveFileDialog(const FString& DialogTitle, const FStri
     return EFDCore::SaveFileDialogCore(DialogTitle, DefaultPath, DefaultFile, FinalFileType, Flags, OutFilenames);
 }
 
+bool UEFDFunctionLibrary::SaveFileDialogRaw(const FString& DialogTitle, const FString& DefaultPath, const FString& DefaultFile, const FString& FileTypes, EEasyFileDialogFlags Flags, TArray<FString>& OutFilenames)
+{
+    return EFDCore::SaveFileDialogCore(DialogTitle, DefaultPath, DefaultFile, FileTypes, Flags, OutFilenames);
+}
+
 
 bool UEFDFunctionLibrary::OpenFolderDialog(const FString& DialogTitle, const FString& DefaultPath, FString& OutFolderName)
 {
