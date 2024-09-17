@@ -17,19 +17,29 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 	GetBaseVerticalAxisInfo(Axis_Start, Axis_End, DiagramSettings);
 	UWidgetBlueprintLibrary::DrawLine(Context, Axis_Start, Axis_End, AxisColor, true, AxisThickness);
 
-	// Calculate Time Min/Max and Amount Min/Max.
-	float Time_Min = DiagramSettings.bShowMinTime ? DiagramSettings.MinTime : FLT_MAX;
-	float Time_Max = DiagramSettings.bShowMaxTime ? DiagramSettings.MaxTime : FLT_MIN;
-	float Amount_Min = FLT_MAX;
-	float Amount_Max = FLT_MIN;
-	for (auto Event : DiagramData.Events)
+	// Calculate Timeline Min/Max
+	float TimelineMin = FLT_MAX;
+	float TimelineMax = FLT_MIN;
+	float ETimeMin, ETimeMax, EAmountMin, EAmountMax, SegMin, SegMax;
+	DiagramData.GetEventsRange(ETimeMin, ETimeMax, EAmountMin, EAmountMax);
+	DiagramData.GetSegmentsRange(SegMin, SegMax);
+	if (!DiagramData.Events.IsEmpty() && !DiagramData.Segments.IsEmpty())
 	{
-		if (Event.Time < Time_Min) Time_Min = Event.Time;
-		if (Event.Amount < Amount_Min) Amount_Min = Event.Amount;
-
-		if (Event.Time > Time_Max) Time_Max = Event.Time;
-		if (Event.Amount > Amount_Max) Amount_Max = Event.Amount;
+		TimelineMin = FMath::Min(ETimeMin, SegMin);
+		TimelineMax = FMath::Max(ETimeMax, SegMax);
 	}
+	else if (!DiagramData.Events.IsEmpty())
+	{
+		TimelineMin = ETimeMin;
+		TimelineMax = ETimeMax;
+	}
+	else if (!DiagramData.Segments.IsEmpty())
+	{
+		TimelineMin = SegMin;
+		TimelineMax = SegMax;
+	}
+	if (DiagramSettings.bShowMinTime) TimelineMin = FMath::Min(TimelineMin, DiagramSettings.MinTime);
+	if (DiagramSettings.bShowMaxTime) TimelineMax = FMath::Max(TimelineMax, DiagramSettings.MaxTime);
 
 	// Draw segment texts
 	bool bDrewSegText = false;
@@ -50,7 +60,7 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 		{
 			bDrewSegText = true;
 			FVector2D SegTextPos;
-			SegTextPos.Y = (GetTimePosY(Seg.Start, Time_Min, Time_Max, DiagramSettings, DiagramData) + GetTimePosY(Seg.End, Time_Min, Time_Max, DiagramSettings, DiagramData)) / 2.f; // between Start and End
+			SegTextPos.Y = (GetTimePosY(Seg.Start, TimelineMin, TimelineMax, DiagramSettings, DiagramData) + GetTimePosY(Seg.End, TimelineMin, TimelineMax, DiagramSettings, DiagramData)) / 2.f; // between Start and End
 			SegTextPos.Y -= SegTextSize.Y / 2.f;
 
 			SegTextPos.X = Axis_Start.X + TimeSegmentTextSpace;
@@ -66,7 +76,7 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 	{
 		const float HTime = HLineInfo.Key;
 		const EDividerLine LineType = HLineInfo.Value;
-		const float TimeY = GetTimePosY(HTime, Time_Min, Time_Max, DiagramSettings, DiagramData);
+		const float TimeY = GetTimePosY(HTime, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
 
 		const FVector2D LineStart(Axis_Start.X, TimeY);
 		const FVector2D LineEnd(DiagramSettings.DiagramSize.X * HorizontalLineEndRatioX, TimeY);
@@ -90,18 +100,18 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 	// Draw Min/Max Time if needed.
 	if (DiagramSettings.bShowMaxTime)
 	{
-		DrawTimeAndTimeMark(Context, DiagramSettings.MaxTime, Time_Min, Time_Max, DiagramSettings, DiagramData);
+		DrawTimeAndTimeMark(Context, DiagramSettings.MaxTime, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
 	}
 	if (DiagramSettings.bShowMinTime)
 	{
-		DrawTimeAndTimeMark(Context, DiagramSettings.MinTime, Time_Min, Time_Max, DiagramSettings, DiagramData);
+		DrawTimeAndTimeMark(Context, DiagramSettings.MinTime, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
 	}
 
 	for (const FHWDiagramEvent& Event : DiagramData.Events)
 	{
 		float Time = Event.Time;
 		float Amount = Event.Amount;
-		float TimeY = GetTimePosY(Time, Time_Min, Time_Max, DiagramSettings, DiagramData);
+		float TimeY = GetTimePosY(Time, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
 
 		// Draw Time and its mark on the axis if not drawen already
 		if (!(DiagramSettings.bShowMaxTime && FMath::IsNearlyEqual(DiagramSettings.MaxTime, Time)
@@ -109,7 +119,7 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 		{
 			if (Event.Texts.Num() > 0)
 			{
-				DrawTimeAndTimeMark(Context, Time, Time_Min, Time_Max, DiagramSettings, DiagramData);
+				DrawTimeAndTimeMark(Context, Time, TimelineMin, TimelineMax, DiagramSettings, DiagramData);
 			}
 		}
 
@@ -144,7 +154,7 @@ float UHWDiagramDrawer_VerticalTimeline::GetTimePosY(float Time, float MinTime, 
 	const float TextPosY_Start = DiagramSettings.DiagramSize.Y * EventTextRatioY_Start;
 	const float TextPosY_End = DiagramSettings.DiagramSize.Y * EventTextRatioY_End;
 
-	return DiagramData.Events.Num() == 1 && FMath::IsNearlyEqual(MinTime, MaxTime) ?
+	return DiagramData.Events.Num() == 1 && DiagramData.Segments.IsEmpty() && FMath::IsNearlyEqual(MinTime, MaxTime, 0.001f) ?
 		DiagramSettings.DiagramSize.X * AxisCenter	// center if there is only 1 event
 		: FMath::GetMappedRangeValueClamped(
 			FVector2D(MinTime, MaxTime),
