@@ -57,6 +57,7 @@ public:
 
 	virtual void Draw_Implementation(FPaintContext Context, const FHWDiagramSettings& DiagramSettings, const FHWDiagramData& DiagramData) override;
 
+protected:
 	void GetBaseVerticalAxisInfo(FVector2D& OutStart, FVector2D& OutEnd, const FHWDiagramSettings& DiagramSettings);
 
 	float GetTimePosY(float Time, float MinTime, float MaxTime, const FHWDiagramSettings& DiagramSettings, const FHWDiagramData& DiagramData);
@@ -65,4 +66,6 @@ public:
 	void DrawTimeAndTimeMark(FPaintContext Context, float Time, float MinTime, float MaxTime, const FHWDiagramSettings& DiagramSettings, const FHWDiagramData& DiagramData);
 
 	static void AddIfNotContainNearlyEqual(TArray<float>& Target, float Value, int32 MaxFracDigits);
+
+	bool AddToMapWithPriorityCheck(float Time, EDividerLine LineType, TMap<float, EDividerLine>& TargetMap);
 };

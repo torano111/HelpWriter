@@ -49,12 +49,9 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 	TMap<float, EDividerLine> DividerLinePositions;
 	for (auto Seg : DiagramData.Segments)
 	{
-		// add divider line info to the TMap
-		// EDividerLine priority: DL_Solid > DL_Dotted > DL_None
-		auto StartLinePtr = DividerLinePositions.Find(Seg.Start);
-		auto EndLinePtr = DividerLinePositions.Find(Seg.End);
-		if (Seg.DividerLine_Start != EDividerLine::DL_None && (StartLinePtr == nullptr || (uint8)(*StartLinePtr) < (uint8)Seg.DividerLine_Start)) DividerLinePositions.Add(Seg.Start, Seg.DividerLine_Start);
-		if (Seg.DividerLine_End != EDividerLine::DL_None && (EndLinePtr == nullptr || (uint8)(*EndLinePtr) < (uint8)Seg.DividerLine_End)) DividerLinePositions.Add(Seg.End, Seg.DividerLine_End);
+		// add divider line info to the TMap if needed
+		AddToMapWithPriorityCheck(Seg.Start, Seg.DividerLine_Start, DividerLinePositions);
+		AddToMapWithPriorityCheck(Seg.End, Seg.DividerLine_End, DividerLinePositions);
 
 		const FVector2D SegTextSize = UHWFunctionLibrary::GetTextSize(Seg.Text.Text, DiagramSettings.TimeSegmentTextSize, DiagramSettings.DefaultTextFont, DiagramSettings.DefaultTextFontTypeFace);
 
@@ -73,6 +70,11 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 		}
 	}
 
+	// Draw the second axis
+	const FVector2D Axis2_Start = Axis_Start + FVector2D(TimeSegmentOffsetX, 0.f);
+	const FVector2D Axis2_End = Axis_End + FVector2D(TimeSegmentOffsetX, 0.f);
+	if (bDrewSegText) UWidgetBlueprintLibrary::DrawLine(Context, Axis2_Start, Axis2_End, AxisColor, true, AxisThickness);
+
 	// Draw horizontal lines
 	for (auto HLineInfo : DividerLinePositions)
 	{
@@ -82,6 +84,7 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 
 		const FVector2D LineStart(Axis_Start.X, TimeY);
 		const FVector2D LineEnd(DiagramSettings.DiagramSize.X * HorizontalLineEndRatioX, TimeY);
+		const FVector2D ShortLineEnd(Axis2_Start.X, TimeY);
 
 		AddIfNotContainNearlyEqual(TimesToDraw, HTime, DiagramSettings.TimeMaxFractionalDigits);
 
@@ -93,13 +96,16 @@ void UHWDiagramDrawer_VerticalTimeline::Draw_Implementation(FPaintContext Contex
 		case EDividerLine::DL_Dotted:
 			UHWFunctionLibrary::DrawDottedLine(Context, LineStart, LineEnd, DottedLineSize, AxisColor, true, HorizontalLineThickness);
 			break;
+		case EDividerLine::DL_ShortSolid:
+			UWidgetBlueprintLibrary::DrawLine(Context, LineStart, ShortLineEnd, AxisColor, true, HorizontalLineThickness);
+			break;
+		case EDividerLine::DL_ShortDotted:
+			UHWFunctionLibrary::DrawDottedLine(Context, LineStart, ShortLineEnd, DottedLineSize, AxisColor, true, HorizontalLineThickness);
+			break;
 		default:
 			break;
 		}
 	}
-
-	// Draw the second axis
-	if (bDrewSegText) UWidgetBlueprintLibrary::DrawLine(Context, Axis_Start + FVector2D(TimeSegmentOffsetX, 0.f), Axis_End + FVector2D(TimeSegmentOffsetX, 0.f), AxisColor, true, AxisThickness);
 
 	// Draw Min/Max Time if needed.
 	if (DiagramSettings.bShowMaxTime) AddIfNotContainNearlyEqual(TimesToDraw, DiagramSettings.MaxTime, DiagramSettings.TimeMaxFractionalDigits);
@@ -188,4 +194,16 @@ void UHWDiagramDrawer_VerticalTimeline::AddIfNotContainNearlyEqual(TArray<float>
 	const float Tolerance = 1.0f / FMath::Pow(10.0f, MaxFracDigits);
 	bool bContains = Target.ContainsByPredicate([Value, Tolerance](float Element) { return FMath::IsNearlyEqual(Element, Value, Tolerance); });
 	if (!bContains) Target.Add(Value);
+}
+
+bool UHWDiagramDrawer_VerticalTimeline::AddToMapWithPriorityCheck(float Time, EDividerLine LineType, TMap<float, EDividerLine>& TargetMap)
+{
+	// EDividerLine priority: DL_Solid > DL_Dotted > DL_ShortSolid > DL_ShortDotted > DL_None
+	auto LinePtr = TargetMap.Find(Time);
+	if (LineType != EDividerLine::DL_None && (LinePtr == nullptr || ((uint8)(*LinePtr)) < (uint8)LineType))
+	{
+		TargetMap.Add(Time, LineType);
+		return true;
+	}
+	return false;
 }

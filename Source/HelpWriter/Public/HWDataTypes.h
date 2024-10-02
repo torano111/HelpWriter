@@ -10,8 +10,10 @@ UENUM(BlueprintType)
 enum class EDividerLine : uint8
 {
 	DL_None = 0 UMETA(DisplayName = "None"),
-	DL_Dotted = 1 UMETA(DisplayName = "Dotted"),
-	DL_Solid = 2 UMETA(DisplayName = "Solid")
+	DL_ShortDotted = 1 UMETA(DisplayName = "Short Dotted"),
+	DL_ShortSolid = 2 UMETA(DisplayName = "Short Solid"),
+	DL_Dotted = 3 UMETA(DisplayName = "Dotted"),
+	DL_Solid = 4 UMETA(DisplayName = "Solid"),
 };
 
 USTRUCT(BlueprintType)
